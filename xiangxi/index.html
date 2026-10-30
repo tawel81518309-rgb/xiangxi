@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#142e39" />
+  <meta name="description" content="走进凤凰古城与茶峒，乘船、开窗，在蝴蝶妈妈的传说后亲手完成一幅蜡染。" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23142e39'/%3E%3Crect x='7' y='7' width='50' height='50' fill='none' stroke='%23d2b578'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='34' fill='%23f3efe6'%3E%E6%B9%98%3C/text%3E%3C/svg%3E" />
+  <title>湘西采风日记</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- 第一幕：凤凰古城实景。图片已本地化，替换 public/images/fenghuang-mist.png 即可换景。 -->
+    <section id="home" class="screen home is-active" aria-labelledby="main-title">
+      <div class="home-photo" aria-hidden="true"></div>
+      <div class="home-shade" aria-hidden="true"></div>
+      <div class="mist mist-a" aria-hidden="true"></div>
+      <div class="mist mist-b" aria-hidden="true"></div>
+      <header class="home-header">
+        <span class="seal">采风</span>
+        <span>湖南 · 湘西</span>
+        <span class="header-line"></span>
+        <span>一卷山水，两地人间</span>
+      </header>
+      <main class="home-main">
+        <p class="home-kicker">TRAVEL NOTES OF XIANGXI</p>
+        <button id="enter-button" class="title-button" type="button" aria-label="点击标题，进入双城微缩岛">
+          <span id="main-title">湘西采风日记</span>
+          <span class="title-english">A journey through river, timber &amp; indigo</span>
+        </button>
+        <div class="enter-hint" aria-hidden="true">
+          <span class="ripple-icon"><i></i><i></i></span>
+          <span>轻点标题 · 循水入城</span>
+        </div>
+      </main>
+      <footer class="home-footer">
+        <span>凤凰古城</span><span class="dot"></span><span>茶峒</span><span class="dot"></span><span>苗族蜡染</span>
+        <span class="home-coordinate">28°13′N &nbsp; 109°36′E</span>
+      </footer>
+    </section>
+
+    <!-- 第二幕：双城记。Three.js 画布与语义化 DOM 控件分离。 -->
+    <section id="island" class="screen island" aria-label="双城微缩岛" hidden>
+      <div class="island-sky" aria-hidden="true"></div>
+      <div id="world-wrap" class="world-wrap">
+        <div id="world-canvas" class="world-canvas" role="img" aria-label="可拖拽旋转、滚轮缩放的三维微缩岛"></div>
+        <div id="world-loading" class="world-loading"><span></span>正在唤醒山水</div>
+      </div>
+      <header class="island-header">
+        <button id="back-home" class="wordmark" type="button" aria-label="返回凤凰古城首页">
+          <span class="seal small">采风</span><span>湘西采风日记</span>
+        </button>
+        <button id="day-night" class="round-control" type="button" aria-label="切换至夜晚" aria-pressed="false">
+          <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.3A8.5 8.5 0 0 1 8.7 3.8 8.5 8.5 0 1 0 20.2 15.3Z"/></svg>
+          <span id="day-night-label">入夜</span>
+        </button>
+      </header>
+      <aside class="city-panel">
+        <p class="chapter-label">第一章 · 双城记</p>
+        <div class="city-tabs" role="tablist" aria-label="选择微缩岛">
+          <button id="tab-fenghuang" class="city-tab is-selected" type="button" role="tab" aria-selected="true" data-city="fenghuang">凤凰古城</button>
+          <button id="tab-chadong" class="city-tab" type="button" role="tab" aria-selected="false" data-city="chadong">茶峒</button>
+        </div>
+        <div class="city-copy" aria-live="polite">
+          <h1 id="city-name">凤凰古城</h1>
+          <p id="city-pinyin" class="city-pinyin">FENGHUANG</p>
+          <p id="city-description">一江沱水穿城过，两岸吊脚楼枕着青山。虹桥连起烟火，跳岩留住渡江人的脚步。</p>
+          <div class="city-landmarks" id="city-landmarks">沱江 · 虹桥 · 万名塔 · 雪桥</div>
+        </div>
+        <div class="scene-tools" aria-label="场景交互快捷键">
+          <button id="open-windows" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V3h16v18M4 12h16M12 3v18M2 21h20"/></svg>
+            开合木窗
+          </button>
+          <button id="boat-mode" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 15 9 3 9-3-2 5H5l-2-5ZM12 18V3M12 4l6 9h-6M12 7l-5 6h5"/></svg>
+            乘船游览
+          </button>
+        </div>
+      </aside>
+      <div class="world-caption">
+        <span id="scene-status">白日 · 江雾未散</span>
+        <span class="caption-line"></span>
+        <span>拖拽旋转 / 滚轮缩放 / 点击探索</span>
+      </div>
+      <button id="exit-boat" class="exit-boat" type="button" hidden>结束乘船 · 返回岛景</button>
+      <button id="continue-button" class="continue-button" type="button">
+        <span>继续</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M14 6l6 6-6 6"/></svg>
+      </button>
+      <div id="world-toast" class="world-toast" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- 第三幕：三幅蓝白平面叙事，由 GSAP 时间线自动推进。 -->
+    <section id="story" class="screen story" aria-label="苗族蝴蝶妈妈故事动画" hidden>
+      <header class="story-header"><span>第二章 · 蝴蝶妈妈</span><span>苗族古歌 · 生命起源的传说</span></header>
+      <div class="story-stage">
+        <div class="story-scene story-scene-1 is-current" data-scene="0">
+          <svg viewBox="0 0 900 520" role="img" aria-label="枫木树心化作蝴蝶妈妈">
+            <g class="story-stars" fill="currentColor"><circle cx="150" cy="90" r="3"/><circle cx="730" cy="110" r="4"/><circle cx="660" cy="60" r="2"/><path d="M220 150h20M230 140v20" stroke="currentColor" stroke-width="3"/></g>
+            <g class="maple-tree" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M450 450V210M450 300 330 200M450 275 565 175M450 360 350 315M450 340 560 290" stroke-width="24"/>
+              <path d="M330 200 290 120M330 200 240 185M565 175 610 90M565 175 665 155M350 315 275 275M560 290 635 260" stroke-width="11"/>
+              <path class="tree-heart" d="M450 285c-40-48-90 12 0 78 90-66 40-126 0-78Z" stroke-width="5"/>
+            </g>
+            <g class="butterfly-hero" fill="none" stroke="currentColor" stroke-width="6">
+              <path d="M450 250c-55-110-160-85-135 5 12 42 70 55 135 20 65 35 123 22 135-20 25-90-80-115-135-5Z"/>
+              <path d="M450 250v105M435 220l15 30 15-30M410 300c-70 5-85 85-25 75 35-6 55-35 65-75M490 300c70 5 85 85 25 75-35-6-55-35-65-75"/>
+            </g>
+          </svg>
+        </div>
+        <div class="story-scene story-scene-2" data-scene="1">
+          <svg viewBox="0 0 900 520" role="img" aria-label="蝴蝶妈妈与水泡游方，生下十二个蛋">
+            <g class="water-lines" fill="none" stroke="currentColor" stroke-width="4"><path d="M80 410q60-30 120 0t120 0 120 0 120 0 120 0 120 0"/><path d="M130 450q60-25 120 0t120 0 120 0 120 0 120 0"/></g>
+            <g class="story-butterfly-small" transform="translate(180 90)" fill="none" stroke="currentColor" stroke-width="6"><path d="M180 160c-50-110-150-90-125-5 12 40 65 55 125 25 60 30 113 15 125-25 25-85-75-105-125 5Z"/><path d="M180 155v110M145 210c-60 10-65 85-15 70 30-8 45-35 50-70M215 210c60 10 65 85 15 70-30-8-45-35-50-70"/></g>
+            <g class="bubbles" fill="none" stroke="currentColor" stroke-width="5"><circle cx="610" cy="160" r="65"/><circle cx="710" cy="90" r="25"/><circle cx="730" cy="235" r="35"/><path d="M580 130q25-25 50-10"/></g>
+            <g class="eggs" fill="none" stroke="currentColor" stroke-width="4">
+              <ellipse cx="310" cy="375" rx="23" ry="30"/><ellipse cx="365" cy="360" rx="23" ry="30"/><ellipse cx="420" cy="375" rx="23" ry="30"/><ellipse cx="475" cy="360" rx="23" ry="30"/><ellipse cx="530" cy="375" rx="23" ry="30"/><ellipse cx="585" cy="360" rx="23" ry="30"/>
+              <ellipse cx="335" cy="425" rx="23" ry="30"/><ellipse cx="390" cy="410" rx="23" ry="30"/><ellipse cx="445" cy="425" rx="23" ry="30"/><ellipse cx="500" cy="410" rx="23" ry="30"/><ellipse cx="555" cy="425" rx="23" ry="30"/><ellipse cx="610" cy="410" rx="23" ry="30"/>
+            </g>
+          </svg>
+        </div>
+        <div class="story-scene story-scene-3" data-scene="2">
+          <svg viewBox="0 0 900 520" role="img" aria-label="鹡宇鸟孵化出姜央及万物">
+            <g class="sun-disc" fill="none" stroke="currentColor" stroke-width="5"><circle cx="450" cy="230" r="170"/><circle cx="450" cy="230" r="145" stroke-dasharray="3 18"/></g>
+            <g class="bird" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"><path d="M180 250q120-160 250 10-160-45-250-10ZM720 250Q600 90 470 260q160-45 250-10Z"/><path d="M430 260q20-80 40 0l-20 75-20-75Z"/><path d="m450 335-65 100M450 335l65 100M445 215l5-45 20 35"/></g>
+            <g class="ancestor" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"><circle cx="450" cy="360" r="28"/><path d="M450 390v70M450 405l-55 40M450 405l55 40M450 460l-40 55M450 460l40 55"/></g>
+            <g class="living-things" fill="none" stroke="currentColor" stroke-width="4"><path d="M160 470v-80M160 420l-35-35M160 440l45-45M740 470v-90M740 410l-45-40M740 435l40-50"/><path d="M250 480q20-55 40 0M650 480q20-55 40 0"/></g>
+          </svg>
+        </div>
+      </div>
+      <div class="story-bottom">
+        <div class="story-progress" aria-hidden="true"><i></i><i></i><i></i></div>
+        <p id="story-subtitle" aria-live="polite">枫木树心，化作蝴蝶妈妈。</p>
+        <button id="skip-story" type="button">跳过动画 <span>→</span></button>
+      </div>
+    </section>
+
+    <!-- 第四幕：蜡染工坊。画布同时承担绘制与染色遮罩显示。 -->
+    <section id="batik" class="screen batik" aria-label="苗族蜡染工艺小游戏" hidden>
+      <header class="batik-header">
+        <div><span class="seal small">染</span><span>蜡染工坊</span></div>
+        <span>以刀为笔 · 以蜡为墨 · 以靛为色</span>
+      </header>
+      <ol class="batik-steps" aria-label="蜡染进度">
+        <li class="is-active" data-step="1"><span>01</span>处理布料</li><li data-step="2"><span>02</span>点蜡</li><li data-step="3"><span>03</span>浸染</li><li data-step="4"><span>04</span>去蜡</li><li data-step="5"><span>05</span>漂洗</li><li data-step="6"><span>06</span>晾晒</li>
+      </ol>
+      <main class="batik-main">
+        <aside class="batik-guide">
+          <p class="chapter-label">手作 · 第六步成锦</p>
+          <h1 id="batik-title">铺一方白布</h1>
+          <p id="batik-instruction">拖拽屏幕中的白布，将它轻轻铺平。纹样，将从这里开始。</p>
+          <div class="batik-actions">
+            <button id="step1-assist" class="text-action" type="button">点击铺平</button>
+            <button id="finish-wax" class="primary-action" type="button" disabled>完成点蜡 <span>→</span></button>
+            <button id="pattern-assist" class="text-action" type="button" hidden>绘一幅蝴蝶纹样</button>
+            <button id="dye-assist" class="text-action" type="button" hidden>点击浸染</button>
+            <button id="wash-button" class="primary-action" type="button" hidden>水洗去蜡 <span>→</span></button>
+            <button id="dry-button" class="primary-action" type="button" hidden>晾晒成锦 <span>→</span></button>
+          </div>
+          <div class="craft-note"><span id="craft-step-count">壹 / 陆</span><p>蜡封住布纤维，蓝靛便无法渗入；去蜡之后，留白自然显现。</p></div>
+        </aside>
+        <div id="batik-stage" class="batik-stage">
+          <div class="stage-ring ring-one" aria-hidden="true"></div><div class="stage-ring ring-two" aria-hidden="true"></div>
+          <div id="cloth" class="cloth is-crumpled" aria-label="白布画布">
+            <canvas id="cloth-canvas" width="640" height="640"></canvas>
+            <span class="cloth-label">蜡 · 白布</span>
+          </div>
+          <div id="dye-vat" class="dye-vat" aria-label="蓝色染缸">
+            <div class="vat-rim"><div id="vat-water" class="vat-water"><i></i><i></i></div></div>
+            <div class="vat-body"><span>靛</span></div>
+            <p>蓝靛染缸</p>
+          </div>
+          <div id="rinse-overlay" class="rinse-overlay" aria-hidden="true"><i></i><i></i><i></i></div>
+          <p id="brush-hint" class="brush-hint">按住并拖动蜡刀，留下淡黄色蜡迹</p>
+        </div>
+      </main>
+      <div id="completion" class="completion" role="dialog" aria-modal="true" aria-labelledby="completion-title" hidden>
+        <div class="completion-inner">
+          <span class="completion-seal">成锦</span>
+          <p>蓝白之间，山水有形</p>
+          <h2 id="completion-title">体验完成</h2>
+          <p>这一方纹样，由你亲手点蜡、浸染而成。</p>
+          <button id="return-home" class="primary-action" type="button">返回主页 <span>→</span></button>
+        </div>
+      </div>
+    </section>
+
+    <canvas id="water-transition" aria-hidden="true"></canvas>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
